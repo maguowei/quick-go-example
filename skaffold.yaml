@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2beta21
+kind: Config
+metadata:
+  name: example
+build:
+  artifacts:
+    - image: example/abc
+      context: build/abc
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+      - deployments/kubernetes/abc/deployment.yaml
+      - deployments/kubernetes/abc/service.yaml

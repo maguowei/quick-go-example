@@ -1,0 +1,8 @@
+app_name: abc
+sentry_dsn: abc
+redis:
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+db:
+  dsn : root:@tcp(127.0.0.1:3306)/qin?charset=utf8mb4&parseTime=True&loc=Local

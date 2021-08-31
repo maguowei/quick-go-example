@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: example
+  name: abc
+  labels:
+    app: abc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: abc
+      labels:
+        app: abc
+    spec:
+      containers:
+        - name: abc
+          image: example/abc
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: abc
