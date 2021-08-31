@@ -1,9 +1,9 @@
-package abc
+package hello
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/zsais/go-gin-prometheus"
-	"example/internal/app/abc/api"
+	"example/internal/app/hello/api"
 )
 
 var app App

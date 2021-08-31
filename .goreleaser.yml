@@ -13,7 +13,7 @@ builds:
       - linux
       - windows
       - darwin
-    main: ./cmd/abc
+    main: ./cmd/hello
 archives:
   - replacements:
       darwin: Darwin

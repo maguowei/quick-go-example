@@ -1,5 +1,5 @@
-app_name: abc
-sentry_dsn: abc
+app_name: hello
+sentry_dsn: hello
 redis:
   host: 127.0.0.1
   port: 6379

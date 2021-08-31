@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: example
-  name: abc
+  name: hello
   labels:
-    app: abc
+    app: hello
 spec:
   replicas: 1
   template:
     metadata:
-      name: abc
+      name: hello
       labels:
-        app: abc
+        app: hello
     spec:
       containers:
-        - name: abc
-          image: example/abc
+        - name: hello
+          image: example/hello
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
   selector:
     matchLabels:
-      app: abc
+      app: hello
