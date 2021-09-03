@@ -2,8 +2,7 @@ package hello
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zsais/go-gin-prometheus"
-	"example/internal/app/hello/api"
+	"example/internal/app/hello/routers"
 )
 
 var app App
@@ -15,15 +14,8 @@ type App struct {
 }
 
 func (app *App) init() {
-	app.router = gin.New()
-
-	p := ginprometheus.NewPrometheus("gin")
-	p.Use(app.router)
-
-	app.router.Use(gin.Logger(), gin.Recovery())
-
-	app.router.GET("/", api.Index)
-	app.router.GET("/health", api.Health)
+	routers.InitRouter()
+	app.router = routers.GetRouter()
 }
 
 func (app *App) Run() {
