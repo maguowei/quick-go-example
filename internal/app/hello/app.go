@@ -15,8 +15,8 @@ type App struct {
 }
 
 func (app *App) init() {
-	routers.InitRouter()
 	configs.InitConfig()
+	routers.InitRouter()
 	app.router = routers.GetRouter()
 }
 
