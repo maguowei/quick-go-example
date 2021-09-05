@@ -9,7 +9,7 @@ init:
 	go mod vendor
 
 build:
-	go build -v ./...
+	go build -v ./cmd/hello
 
 run:
 	go run ./cmd/hello/main.go

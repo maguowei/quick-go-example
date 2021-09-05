@@ -2,6 +2,7 @@ package hello
 
 import (
 	"github.com/gin-gonic/gin"
+	"example/internal/pkg/configs"
 	"example/internal/app/hello/routers"
 )
 
@@ -15,6 +16,7 @@ type App struct {
 
 func (app *App) init() {
 	routers.InitRouter()
+	configs.InitConfig()
 	app.router = routers.GetRouter()
 }
 
