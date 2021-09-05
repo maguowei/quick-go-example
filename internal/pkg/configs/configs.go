@@ -24,6 +24,8 @@ func InitConfig() {
 	viper.BindEnv("APP_PATH")
 	viper.BindEnv("APP_LOG_PATH")
 	viper.BindEnv("APP_SETTINGS_PATH")
+
+	viper.SetDefault("APP_NAME", "hello")
 	viper.SetDefault("APP_ENV", "dev")
 
 	var fileName string

@@ -1,9 +1,9 @@
 package routers
 
 import (
+	"example/internal/app/hello/api"
 	"github.com/gin-gonic/gin"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
-	"example/internal/app/hello/api"
 )
 
 var router *gin.Engine

@@ -1,9 +1,9 @@
 package hello
 
 import (
-	"github.com/gin-gonic/gin"
-	"example/internal/pkg/configs"
 	"example/internal/app/hello/routers"
+	"example/internal/pkg/configs"
+	"github.com/gin-gonic/gin"
 )
 
 var app App
