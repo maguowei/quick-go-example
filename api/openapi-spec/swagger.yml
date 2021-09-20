@@ -1,0 +1,68 @@
+swagger: "2.0"
+info:
+  description: example hello application
+  title: example hello application
+  version: 1.0.0
+produces:
+  - application/com.example.hello.v1+json
+consumes:
+  - application/com.example.hello.v1+json
+schemes:
+  - http
+paths:
+  /:
+    get:
+      tags:
+        - index
+      responses:
+        200:
+          description: index page
+          schema:
+            type: object
+            $ref: "#/definitions/hello"
+            example: {
+              "application/json": {
+                "msg": "hello world!"
+              }
+            }
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/error"
+  /health:
+    get:
+      tags:
+        - health
+      responses:
+        200:
+          description: app health page
+          schema:
+            type: object
+            $ref: "#/definitions/hello"
+            example: {
+              "application/json": {
+                "msg": "ok"
+              }
+            }
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/error"
+definitions:
+  hello:
+    type: object
+    required:
+      - msg
+    properties:
+      msg:
+        type: string
+  error:
+    type: object
+    required:
+      - msg
+    properties:
+      code:
+        type: integer
+        format: int64
+      msg:
+        type: string

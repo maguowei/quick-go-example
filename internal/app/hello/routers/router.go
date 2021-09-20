@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"example/internal/app/hello/api"
+	"example/internal/app/hello/restapi"
 	"github.com/gin-gonic/gin"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
@@ -17,8 +17,8 @@ func InitRouter() {
 
 	router.Use(gin.Logger(), gin.Recovery())
 
-	router.GET("/", api.Index)
-	router.GET("/health", api.Health)
+	router.GET("/", restapi.Index)
+	router.GET("/health", restapi.Health)
 }
 
 func GetRouter() *gin.Engine {
