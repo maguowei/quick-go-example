@@ -1,0 +1,61 @@
+openapi: 3.0.1
+info:
+  title: example hello
+  description: example hello
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /:
+    get:
+      tags:
+        - index
+      responses:
+        200:
+          description: index page
+          content:
+            application/com.example.hello.v1+json:
+              schema:
+                $ref: '#/components/schemas/hello'
+        default:
+          description: generic error response
+          content:
+            application/com.example.hello.v1+json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /health:
+    get:
+      tags:
+        - health
+      responses:
+        200:
+          description: app health page
+          content:
+            application/com.example.hello.v1+json:
+              schema:
+                $ref: '#/components/schemas/hello'
+        default:
+          description: generic error response
+          content:
+            application/com.example.hello.v1+json:
+              schema:
+                $ref: '#/components/schemas/error'
+components:
+  schemas:
+    hello:
+      required:
+        - msg
+      type: object
+      properties:
+        msg:
+          type: string
+    error:
+      required:
+        - msg
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int64
+        msg:
+          type: string
