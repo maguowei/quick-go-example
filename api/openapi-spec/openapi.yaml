@@ -14,15 +14,19 @@ paths:
         200:
           description: index page
           content:
-            application/com.example.hello.v1+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/hello'
+              examples:
+                simple:
+                  summary: example
+                  value: { "msg": "hello world!" }
         default:
           description: generic error response
           content:
-            application/com.example.hello.v1+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: '#/components/schemas/ErrorModel'
   /health:
     get:
       tags:
@@ -31,15 +35,22 @@ paths:
         200:
           description: app health page
           content:
-            application/com.example.hello.v1+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/hello'
+              examples:
+                ok:
+                  summary: health ok
+                  value: { "msg": "ok" }
+                err:
+                  summary: health err
+                  value: { "msg": "err" }
         default:
           description: generic error response
           content:
-            application/com.example.hello.v1+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: '#/components/schemas/ErrorModel'
 components:
   schemas:
     hello:
@@ -49,7 +60,7 @@ components:
       properties:
         msg:
           type: string
-    error:
+    ErrorModel:
       required:
         - msg
       type: object
