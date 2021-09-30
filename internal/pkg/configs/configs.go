@@ -23,10 +23,11 @@ func InitConfig() {
 	viper.BindEnv("APP_ENV")
 	viper.BindEnv("APP_PATH")
 	viper.BindEnv("APP_LOG_PATH")
-	viper.BindEnv("APP_SETTINGS_PATH")
+	viper.BindEnv("APP_CONFIG_PATH")
 
 	viper.SetDefault("APP_NAME", "hello")
 	viper.SetDefault("APP_ENV", "dev")
+	viper.SetDefault("APP_CONFIG_PATH", "configs")
 
 	var fileName string
 	switch appEnv {
@@ -42,19 +43,10 @@ func InitConfig() {
 		fileName = "local.yaml"
 	}
 
-	viper.SetConfigType("yaml")
-
-	AppConfigFile := filepath.Join(viper.GetString("APP_SETTINGS_PATH"), "settings", fileName)
-
-	// for develop env
-	if _, err := os.Stat(AppConfigFile); os.IsNotExist(err) {
-		defaultAppSettingsPath := filepath.Join("configs", viper.GetString("APP_NAME") )
-		viper.SetDefault("APP_SETTINGS_PATH", defaultAppSettingsPath)
-	}
-
-	AppConfigFile = filepath.Join(viper.GetString("APP_SETTINGS_PATH"), "settings", fileName)
-
+	AppConfigFile := filepath.Join(viper.GetString("APP_CONFIG_PATH"), fileName)
 	viper.SetDefault("APP_CONFIG_FILE", AppConfigFile)
+
+	viper.SetConfigType("yaml")
 	viper.SetConfigFile(viper.GetString("APP_CONFIG_FILE"))
 	err := viper.ReadInConfig()
 	if err != nil {
