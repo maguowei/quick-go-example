@@ -4,12 +4,12 @@ metadata:
   name: example
 build:
   artifacts:
-    - image: example/hello
-      context: build/hello
+    - image: example/example
+      context: build/example
       docker:
         dockerfile: Dockerfile
 deploy:
   kubectl:
     manifests:
-      - deployments/kubernetes/hello/deployment.yaml
-      - deployments/kubernetes/hello/service.yaml
+      - deployments/kubernetes/example/deployment.yaml
+      - deployments/kubernetes/example/service.yaml

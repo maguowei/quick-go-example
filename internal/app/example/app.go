@@ -1,7 +1,7 @@
-package hello
+package example
 
 import (
-	"example/internal/app/hello/routers"
+	"example/internal/app/example/routers"
 	"example/internal/pkg/configs"
 	"github.com/gin-gonic/gin"
 )

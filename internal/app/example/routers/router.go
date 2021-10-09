@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"example/internal/app/hello/restapi"
+	"example/internal/app/example/restapi"
 	"github.com/gin-gonic/gin"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
