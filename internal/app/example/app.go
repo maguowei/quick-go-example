@@ -1,9 +1,9 @@
 package example
 
 import (
-	"example/internal/app/example/routers"
-	"example/internal/pkg/configs"
 	"github.com/gin-gonic/gin"
+	"github.com/maguowei/example/internal/app/example/routers"
+	"github.com/maguowei/example/internal/pkg/configs"
 )
 
 var app App
