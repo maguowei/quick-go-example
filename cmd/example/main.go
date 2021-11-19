@@ -1,6 +1,6 @@
 package main
 
-import "github.com/maguowei/example/internal/app/example"
+import "github.com/maguowei/example/internal/example"
 
 func main() {
 	app := example.NewApp()

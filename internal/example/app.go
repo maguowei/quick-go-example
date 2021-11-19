@@ -2,7 +2,7 @@ package example
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/maguowei/example/internal/app/example/interface/routers"
+	"github.com/maguowei/example/internal/example/interface/routers"
 	"github.com/maguowei/example/internal/pkg/configs"
 )
 
