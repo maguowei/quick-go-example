@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/maguowei/example/internal/example/interface/restapi"
+	"github.com/maguowei/example/internal/example/interfaces/restapi"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
 
