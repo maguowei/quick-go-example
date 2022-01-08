@@ -6,7 +6,6 @@ init:
 	go env -w GOPROXY=https://goproxy.cn,direct
 	go mod tidy
 	go mod download
-	go mod vendor
 
 build:
 	go build -v ./cmd/example

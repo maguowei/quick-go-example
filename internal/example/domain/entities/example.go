@@ -1,4 +1,4 @@
-package models
+package entities
 
 type Example struct {
     Id         int64
