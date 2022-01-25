@@ -1,8 +1,8 @@
 app_name: example
 sentry_dsn: example
 redis:
-host: 127.0.0.1
-port: 6379
-db: 0
+  host: 127.0.0.1
+  port: 6379
+  db: 0
 db:
-dsn : root:@tcp(127.0.0.1:3306)/example?charset=utf8mb4&parseTime=True&loc=Local
+  dsn : root:@tcp(127.0.0.1:3306)/example?charset=utf8mb4&parseTime=True&loc=Local
