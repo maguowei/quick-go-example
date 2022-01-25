@@ -16,10 +16,11 @@ type RespMeta struct {
 	Time    int64  `json:"time"`
 }
 
-func DefaultSuccessResp() *Resp {
+func DefaultResp() *Resp {
 	return &Resp{
 		Code: CodeSuccess,
 		Msg:  "",
+		Data: nil,
 		RespMeta: RespMeta{
 			TraceID: "",
 			Caller:  "",
@@ -27,6 +28,12 @@ func DefaultSuccessResp() *Resp {
 			Time:    time.Now().UnixMilli(),
 		},
 	}
+}
+
+func DefaultSuccessResp() *Resp {
+	resp := DefaultResp()
+	resp.Msg = "success"
+	return resp
 }
 
 func SuccessWithDataResp(data interface{}) *Resp {
@@ -53,4 +60,10 @@ func DefaultErrResp() *Resp {
 		Code: CodeError,
 		Msg:  "",
 	}
+}
+
+func DefaultErrWithMsgResp(msg string) *Resp {
+	resp := DefaultErrResp()
+	resp.Msg = msg
+	return resp
 }
