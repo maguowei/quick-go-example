@@ -3,7 +3,7 @@ package example
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/maguowei/example/internal/pkg/app"
-	"github.com/maguowei/example/internal/example/interfaces/routers"
+	"github.com/maguowei/example/internal/example/interfaces/server"
 	"github.com/maguowei/example/internal/pkg/configs"
 )
 
@@ -12,18 +12,18 @@ var myApp app.App
 type DefaultApp struct {
 	appName string
 	addr   string
-	router *gin.Engine
+	server *gin.Engine
 }
 
 func (app *DefaultApp) init() {
 	configs.InitConfig()
-	routers.InitRouter()
-	app.router = routers.GetRouter()
+	server.InitServer()
+	app.server = server.GetServer()
 }
 
 func (app *DefaultApp) Run() {
 	app.init()
-	app.router.Run()
+	app.server.Run()
 }
 
 func NewApp() app.App {
