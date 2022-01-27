@@ -1,0 +1,8 @@
+# example create
+POST {{host}}/example/create
+Content-Type: application/json
+
+{
+}
+
+###
