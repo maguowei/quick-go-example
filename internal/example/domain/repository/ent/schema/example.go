@@ -5,24 +5,24 @@ import (
 	"github.com/maguowei/example/internal/pkg/mixin"
 )
 
-// Feedback holds the schema definition for the Feedback entity.
-type Feedback struct {
+// Example holds the schema definition for the Example entity.
+type Example struct {
 	ent.Schema
 }
 
-func (Feedback) Mixin() []ent.Mixin {
+func (Example) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 	}
 }
 
-// Fields of the Feedback.
-func (Feedback) Fields() []ent.Field {
+// Fields of the Example.
+func (Example) Fields() []ent.Field {
 	return []ent.Field{
 	}
 }
 
-// Edges of the Feedback.
-func (Feedback) Edges() []ent.Edge {
+// Edges of the Example.
+func (Example) Edges() []ent.Edge {
 	return nil
 }

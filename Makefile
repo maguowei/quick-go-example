@@ -4,8 +4,9 @@ echo:
 
 init:
 	go env -w GOPROXY=https://goproxy.cn,direct
-	go mod tidy
 	go mod download
+	go run -mod=mod entgo.io/ent/cmd/ent generate ./internal/example/domain/repository/ent/schema
+	go mod tidy -go=1.16 && go mod tidy -go=1.17
 
 build:
 	go build -v ./cmd/example
