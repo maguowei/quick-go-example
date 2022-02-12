@@ -10,11 +10,11 @@ import (
 
 func Health(c *gin.Context) {
 	data := dto.HealthRespDto{Status: "ok"}
-	resp := restresp.SuccessWithDataResp(data)
+	resp := restresp.SuccessWithDataResp(c, data)
 	c.JSON(http.StatusOK, resp)
 }
 
 func Index(c *gin.Context) {
-	resp := restresp.DefaultSuccessResp()
+	resp := restresp.DefaultSuccessResp(c)
 	c.JSON(http.StatusOK, resp)
 }

@@ -1,6 +1,10 @@
 package restresp
 
-import "time"
+import (
+	"github.com/gin-contrib/requestid"
+	"github.com/gin-gonic/gin"
+	"time"
+)
 
 type Resp struct {
 	Code     int         `json:"code"`
@@ -16,13 +20,13 @@ type RespMeta struct {
 	Time    int64  `json:"time"`
 }
 
-func DefaultResp() *Resp {
+func DefaultResp(c *gin.Context) *Resp {
 	return &Resp{
 		Code: CodeSuccess,
 		Msg:  "",
 		Data: nil,
 		RespMeta: RespMeta{
-			TraceID: "",
+			TraceID: requestid.Get(c),
 			Caller:  "",
 			API:     "",
 			Time:    time.Now().UnixMilli(),
@@ -30,40 +34,40 @@ func DefaultResp() *Resp {
 	}
 }
 
-func DefaultSuccessResp() *Resp {
-	resp := DefaultResp()
+func DefaultSuccessResp(c *gin.Context) *Resp {
+	resp := DefaultResp(c)
 	resp.Msg = "success"
 	return resp
 }
 
-func SuccessWithDataResp(data interface{}) *Resp {
-	resp := DefaultSuccessResp()
+func SuccessWithDataResp(c *gin.Context, data interface{}) *Resp {
+	resp := DefaultSuccessResp(c)
 	resp.Data = data
 	return resp
 }
 
-func SuccessWithMsgResp(msg string) *Resp {
-	resp := DefaultSuccessResp()
+func SuccessWithMsgResp(c *gin.Context, msg string) *Resp {
+	resp := DefaultSuccessResp(c)
 	resp.Msg = msg
 	return resp
 }
 
-func SuccessResp(msg string, data interface{}) *Resp {
-	resp := DefaultSuccessResp()
+func SuccessResp(c *gin.Context, msg string, data interface{}) *Resp {
+	resp := DefaultSuccessResp(c)
 	resp.Msg = msg
 	resp.Data = data
 	return resp
 }
 
-func DefaultErrResp() *Resp {
+func DefaultErrResp(c *gin.Context) *Resp {
 	return &Resp{
 		Code: CodeError,
 		Msg:  "",
 	}
 }
 
-func DefaultErrWithMsgResp(msg string) *Resp {
-	resp := DefaultErrResp()
+func DefaultErrWithMsgResp(c *gin.Context, msg string) *Resp {
+	resp := DefaultErrResp(c)
 	resp.Msg = msg
 	return resp
 }

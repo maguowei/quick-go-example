@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/maguowei/example/internal/example/application/service"
@@ -19,7 +20,7 @@ var server *gin.Engine
 
 func InitServer() {
 	server = gin.New()
-
+	server.Use(requestid.New())
 	p := ginprometheus.NewPrometheus("gin")
 	p.Use(server)
 

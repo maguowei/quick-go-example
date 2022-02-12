@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	entgo.io/ent v0.10.0
+	github.com/gin-contrib/requestid v0.0.3
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/spf13/viper v1.10.1
