@@ -106,7 +106,7 @@ func (eq *ExampleQuery) FirstIDX(ctx context.Context) int {
 }
 
 // Only returns a single Example entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when exactly one Example entity is not found.
+// Returns a *NotSingularError when more than one Example entity is found.
 // Returns a *NotFoundError when no Example entities are found.
 func (eq *ExampleQuery) Only(ctx context.Context) (*Example, error) {
 	nodes, err := eq.Limit(2).All(ctx)
@@ -133,7 +133,7 @@ func (eq *ExampleQuery) OnlyX(ctx context.Context) *Example {
 }
 
 // OnlyID is like Only, but returns the only Example ID in the query.
-// Returns a *NotSingularError when exactly one Example ID is not found.
+// Returns a *NotSingularError when more than one Example ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (eq *ExampleQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
@@ -242,8 +242,9 @@ func (eq *ExampleQuery) Clone() *ExampleQuery {
 		order:      append([]OrderFunc{}, eq.order...),
 		predicates: append([]predicate.Example{}, eq.predicates...),
 		// clone intermediate query.
-		sql:  eq.sql.Clone(),
-		path: eq.path,
+		sql:    eq.sql.Clone(),
+		path:   eq.path,
+		unique: eq.unique,
 	}
 }
 
