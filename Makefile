@@ -23,5 +23,8 @@ run-example:
 deploy:
 	kubectl apply -f deployments/kubernetes/example
 
+del-deploy:
+	kubectl delete -f deployments/kubernetes/example
+
 test:
 	go test -v ./...
