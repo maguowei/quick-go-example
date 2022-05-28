@@ -1,4 +1,4 @@
-apiVersion: skaffold/v2beta21
+apiVersion: skaffold/v2beta28
 kind: Config
 metadata:
   name: example
@@ -13,3 +13,4 @@ deploy:
     manifests:
       - deployments/kubernetes/example/deployment.yaml
       - deployments/kubernetes/example/service.yaml
+      - deployments/kubernetes/example/ingress.yaml

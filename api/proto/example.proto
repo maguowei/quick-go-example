@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package api;
+option go_package = "github.com/maguowei/example/api/example";
+
+import "google/protobuf/timestamp.proto";
+
+
+service ExampleService {
+  rpc Get (ExampleRequest) returns (Example) {}
+}
+
+message ExampleRequest {
+  uint64 id = 1;
+}
+
+message Example {
+  int64 id = 1;
+  string message = 2;
+  google.protobuf.Timestamp create_time = 3;
+}
