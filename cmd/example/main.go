@@ -4,5 +4,7 @@ import "github.com/maguowei/example/internal/example"
 
 func main() {
 	app := example.NewApp()
-	app.Run()
+	if err := app.Run(); err != nil {
+		panic(err)
+	}
 }

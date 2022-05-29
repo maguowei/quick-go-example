@@ -2,35 +2,28 @@ package example
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/maguowei/example/internal/pkg/app"
 	"github.com/maguowei/example/internal/example/interfaces/server"
+	"github.com/maguowei/example/internal/pkg/app"
 	"github.com/maguowei/example/internal/pkg/configs"
 )
 
-var myApp app.App
-
 type DefaultApp struct {
 	appName string
-	addr   string
-	server *gin.Engine
+	addr    string
+	server  *gin.Engine
 }
 
-func (app *DefaultApp) init() {
-	configs.InitConfig()
+func (app *DefaultApp) Run() error {
 	server.InitServer()
 	app.server = server.GetServer()
-}
-
-func (app *DefaultApp) Run() {
-	app.init()
-	app.server.Run()
+	if err := app.server.Run(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewApp() app.App {
-	myApp = &DefaultApp{}
-	return myApp
-}
-
-func GetApp() app.App {
+	configs.InitConfig()
+	myApp := &DefaultApp{}
 	return myApp
 }
