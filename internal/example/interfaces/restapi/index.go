@@ -2,11 +2,10 @@ package restapi
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/maguowei/example/internal/pkg/restresp"
 	"github.com/maguowei/example/internal/example/interfaces/dto"
+	"github.com/maguowei/example/internal/pkg/restresp"
 	"net/http"
 )
-
 
 func Health(c *gin.Context) {
 	data := dto.HealthRespDto{Status: "ok"}
