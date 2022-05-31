@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+
 func Health(c *gin.Context) {
 	data := dto.HealthRespDto{Status: "ok"}
 	resp := restresp.SuccessWithDataResp(c, data)

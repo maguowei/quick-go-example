@@ -7,6 +7,7 @@ import (
 	"github.com/maguowei/example/internal/pkg/configs"
 )
 
+
 type DefaultApp struct {
 	appName string
 	addr    string
