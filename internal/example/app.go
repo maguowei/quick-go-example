@@ -2,15 +2,16 @@ package example
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/maguowei/example/internal/example/interfaces/server"
 	"github.com/maguowei/example/internal/pkg/app"
+	"github.com/maguowei/example/internal/example/interfaces/server"
 	"github.com/maguowei/example/internal/pkg/configs"
 )
 
+
 type DefaultApp struct {
 	appName string
-	addr    string
-	server  *gin.Engine
+	addr   string
+	server *gin.Engine
 }
 
 func (app *DefaultApp) Run() error {
@@ -27,3 +28,4 @@ func NewApp() app.App {
 	myApp := &DefaultApp{}
 	return myApp
 }
+
