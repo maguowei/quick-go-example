@@ -43,8 +43,8 @@ func InitConfig() {
 		fileName = "local.yaml"
 	}
 
-	AppConfigFile := filepath.Join(viper.GetString("APP_CONFIG_PATH"), fileName)
-	viper.SetDefault("APP_CONFIG_FILE", AppConfigFile)
+	appConfigFile := filepath.Join(viper.GetString("APP_CONFIG_PATH"), fileName)
+	viper.SetDefault("APP_CONFIG_FILE", appConfigFile)
 
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile(viper.GetString("APP_CONFIG_FILE"))
