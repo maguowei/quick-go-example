@@ -1,7 +1,6 @@
 package restapi
 
 import (
-    "context"
     "github.com/gin-gonic/gin"
     "github.com/maguowei/example/internal/example/application/service"
     "github.com/maguowei/example/internal/example/interfaces/dto"
