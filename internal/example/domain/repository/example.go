@@ -1,6 +1,7 @@
 package repository
 
 import (
+    "context"
     "github.com/maguowei/example/internal/example/domain/entities"
     "github.com/maguowei/example/internal/example/domain/repository/ent"
 )
@@ -15,20 +16,20 @@ func NewExampleRepository(entClient *ent.Client) ExampleRepositoryInterface {
     }
 }
 
-func (r *exampleRepository) GetExample(exampleId int64) (*entities.Example, error) {
+func (r *exampleRepository) GetExample(ctx context.Context, exampleId int64) (*entities.Example, error) {
     panic("implement me")
 }
-func (r *exampleRepository) GetExamples() ([]entities.Example, error) {
+func (r *exampleRepository) GetExamples(ctx context.Context, exampleIds []int64) ([]entities.Example, error) {
     panic("implement me")
 }
-func (r *exampleRepository) CreateExample(example *entities.Example) (*entities.Example, error) {
-    panic("implement me")
-}
-
-func (r *exampleRepository) UpdateExample(example *entities.Example) (*entities.Example, error) {
+func (r *exampleRepository) CreateExample(ctx context.Context, example *entities.Example) (*entities.Example, error) {
     panic("implement me")
 }
 
-func (r *exampleRepository) DeleteExample(exampleId int64) error {
+func (r *exampleRepository) UpdateExample(ctx context.Context, example *entities.Example) (*entities.Example, error) {
+    panic("implement me")
+}
+
+func (r *exampleRepository) DeleteExample(ctx context.Context, exampleId int64) error {
     panic("implement me")
 }

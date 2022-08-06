@@ -1,6 +1,7 @@
 package restapi
 
 import (
+    "context"
     "github.com/gin-gonic/gin"
     "github.com/maguowei/example/internal/example/application/service"
     "github.com/maguowei/example/internal/example/interfaces/dto"
@@ -26,7 +27,7 @@ func (api *ExampleApi) CreateExample(c *gin.Context) {
         return
     }
 
-    _, err := api.exampleAppService.CreateExample(req.ToDO())
+    _, err := api.exampleAppService.CreateExample(c.Request.Context(), req.ToDO())
     if err != nil {
         resp := restresp.DefaultErrWithMsgResp(c, err.Error())
         c.JSON(http.StatusOK, resp)

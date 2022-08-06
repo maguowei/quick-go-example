@@ -1,7 +1,10 @@
 package service
 
-import "github.com/maguowei/example/internal/example/domain/entities"
+import (
+    "context"
+    "github.com/maguowei/example/internal/example/domain/entities"
+)
 
 type ExampleAppServiceInterface interface {
-    CreateExample(example *entities.Example) (*entities.Example, error)
+    CreateExample(ctx context.Context, example *entities.Example) (*entities.Example, error)
 }

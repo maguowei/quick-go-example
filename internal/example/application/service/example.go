@@ -1,6 +1,7 @@
 package service
 
 import (
+    "context"
     "github.com/maguowei/example/internal/example/domain/entities"
     "github.com/maguowei/example/internal/example/domain/service"
 )
@@ -15,6 +16,6 @@ func NewExampleAppService(exampleDomainService service.ExampleDomainInterface) E
     }
 }
 
-func (s *exampleAppService) CreateExample(example *entities.Example) (*entities.Example, error) {
-    return s.exampleDomainService.CreateExample(example)
+func (s *exampleAppService) CreateExample(ctx context.Context, example *entities.Example) (*entities.Example, error) {
+    return s.exampleDomainService.CreateExample(ctx, example)
 }
