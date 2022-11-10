@@ -261,7 +261,6 @@ func (eq *ExampleQuery) Clone() *ExampleQuery {
 //		GroupBy(example.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (eq *ExampleQuery) GroupBy(field string, fields ...string) *ExampleGroupBy {
 	grbuild := &ExampleGroupBy{config: eq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -288,7 +287,6 @@ func (eq *ExampleQuery) GroupBy(field string, fields ...string) *ExampleGroupBy 
 //	client.Example.Query().
 //		Select(example.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (eq *ExampleQuery) Select(fields ...string) *ExampleSelect {
 	eq.fields = append(eq.fields, fields...)
 	selbuild := &ExampleSelect{ExampleQuery: eq}
