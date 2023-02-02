@@ -7,8 +7,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/maguowei/example/internal/example/application/service"
 	domainService "github.com/maguowei/example/internal/example/domain/service"
-	"github.com/maguowei/example/internal/example/infrastructure/repository"
 	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent"
+	"github.com/maguowei/example/internal/example/infrastructure/repository"
 	"github.com/maguowei/example/internal/example/interfaces/restapi"
 	"github.com/spf13/viper"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
@@ -16,7 +16,6 @@ import (
 )
 
 var server *gin.Engine
-
 
 func InitServer() {
 	server = gin.New()
@@ -39,7 +38,6 @@ func InitServer() {
 	exampleDomainService := domainService.NewExampleDomainService(exampleRepository)
 	exampleAppService := service.NewExampleAppService(exampleDomainService)
 	exampleApi := restapi.NewExampleApi(exampleAppService)
-
 
 	server.GET("/", restapi.Index)
 	server.GET("/health", restapi.Health)
