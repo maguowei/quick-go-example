@@ -5,8 +5,8 @@ package ent
 import (
 	"time"
 
-	"github.com/maguowei/example/internal/example/domain/repository/ent/example"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/schema"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/schema"
 )
 
 // The init function reads all schema descriptors with runtime code

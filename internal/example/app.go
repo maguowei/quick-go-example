@@ -8,13 +8,13 @@ import (
 )
 
 
-type DefaultApp struct {
+type defaultApp struct {
 	appName string
 	addr    string
 	server  *gin.Engine
 }
 
-func (app *DefaultApp) Run() error {
+func (app *defaultApp) Run() error {
 	server.InitServer()
 	app.server = server.GetServer()
 	if err := app.server.Run(); err != nil {
@@ -25,6 +25,6 @@ func (app *DefaultApp) Run() error {
 
 func NewApp() app.App {
 	configs.InitConfig()
-	myApp := &DefaultApp{}
+	myApp := &defaultApp{}
 	return myApp
 }

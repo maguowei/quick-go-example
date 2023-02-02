@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/maguowei/example/internal/example/domain/repository/ent"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent"
 	// required by schema hooks.
-	_ "github.com/maguowei/example/internal/example/domain/repository/ent/runtime"
+	_ "github.com/maguowei/example/internal/example/infrastructure/persistence/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/migrate"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/migrate"
 )
 
 type (

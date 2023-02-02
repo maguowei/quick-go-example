@@ -3,14 +3,15 @@ package repository
 import (
     "context"
     "github.com/maguowei/example/internal/example/domain/entities"
-    "github.com/maguowei/example/internal/example/domain/repository/ent"
+    "github.com/maguowei/example/internal/example/domain/repository"
+    "github.com/maguowei/example/internal/example/infrastructure/persistence/ent"
 )
 
 type exampleRepository struct {
     entClient *ent.Client
 }
 
-func NewExampleRepository(entClient *ent.Client) ExampleRepositoryInterface {
+func NewExampleRepository(entClient *ent.Client) repository.ExampleRepositoryInterface {
     return &exampleRepository{
         entClient: entClient,
     }

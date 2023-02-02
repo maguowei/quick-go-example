@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/predicate"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

@@ -10,7 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/example"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
 )
 
 // ExampleCreate is the builder for creating a Example entity.

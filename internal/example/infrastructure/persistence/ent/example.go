@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/example"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
 )
 
 // Example is the model entity for the Example schema.

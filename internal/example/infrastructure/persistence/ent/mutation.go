@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/maguowei/example/internal/example/domain/repository/ent/example"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/predicate"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/predicate"
 
 	"entgo.io/ent"
 )

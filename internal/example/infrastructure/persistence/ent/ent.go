@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/maguowei/example/internal/example/domain/repository/ent/example"
+	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
 )
 
 // ent aliases to avoid import conflicts in user's code.
