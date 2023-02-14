@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/maguowei/example/internal/example/infrastructure/persistence/ent/runtime.go
+// The schema-stitching logic is generated in example/internal/example/infrastructure/persistence/ent/runtime.go
 
 const (
 	Version = "v0.11.1"                                         // Version of ent codegen.

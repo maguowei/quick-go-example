@@ -2,8 +2,8 @@ package service
 
 import (
     "context"
-    "github.com/maguowei/example/internal/example/domain/entities"
-    "github.com/maguowei/example/internal/example/domain/repository"
+    "example/internal/example/domain/entities"
+    "example/internal/example/domain/repository"
 )
 
 type exampleDomainService struct {

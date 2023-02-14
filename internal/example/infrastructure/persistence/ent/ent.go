@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"errors"
+	"example/internal/example/infrastructure/persistence/ent/example"
 	"fmt"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
 )
 
 // ent aliases to avoid import conflicts in user's code.

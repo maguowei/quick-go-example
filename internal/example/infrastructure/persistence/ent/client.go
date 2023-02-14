@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/migrate"
+	"example/internal/example/infrastructure/persistence/ent/migrate"
 
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
+	"example/internal/example/infrastructure/persistence/ent/example"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

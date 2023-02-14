@@ -5,12 +5,11 @@ package ent
 import (
 	"context"
 	"errors"
+	"example/internal/example/infrastructure/persistence/ent/example"
+	"example/internal/example/infrastructure/persistence/ent/predicate"
 	"fmt"
 	"sync"
 	"time"
-
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/predicate"
 
 	"entgo.io/ent"
 )

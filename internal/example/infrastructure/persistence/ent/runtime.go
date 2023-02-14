@@ -3,10 +3,9 @@
 package ent
 
 import (
+	"example/internal/example/infrastructure/persistence/ent/example"
+	"example/internal/example/infrastructure/persistence/ent/schema"
 	"time"
-
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/schema"
 )
 
 // The init function reads all schema descriptors with runtime code

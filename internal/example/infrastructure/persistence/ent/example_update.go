@@ -5,14 +5,14 @@ package ent
 import (
 	"context"
 	"errors"
+	"example/internal/example/infrastructure/persistence/ent/example"
+	"example/internal/example/infrastructure/persistence/ent/predicate"
 	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/predicate"
 )
 
 // ExampleUpdate is the builder for updating Example entities.

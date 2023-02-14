@@ -1,4 +1,4 @@
-module github.com/maguowei/example
+module example
 
 go 1.19
 

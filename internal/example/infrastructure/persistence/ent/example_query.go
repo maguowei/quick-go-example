@@ -4,14 +4,14 @@ package ent
 
 import (
 	"context"
+	"example/internal/example/infrastructure/persistence/ent/example"
+	"example/internal/example/infrastructure/persistence/ent/predicate"
 	"fmt"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/predicate"
 )
 
 // ExampleQuery is the builder for querying Example entities.

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package api;
-option go_package = "github.com/maguowei/example/api/example";
+option go_package = "example/api/example";
 
 import "google/protobuf/timestamp.proto";
 

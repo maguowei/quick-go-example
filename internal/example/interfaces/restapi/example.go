@@ -2,9 +2,9 @@ package restapi
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/maguowei/example/internal/example/application/service"
-    "github.com/maguowei/example/internal/example/interfaces/dto"
-    "github.com/maguowei/example/internal/pkg/restresp"
+    "example/internal/example/application/service"
+    "example/internal/example/interfaces/dto"
+    "example/internal/pkg/restresp"
     "net/http"
 )
 

@@ -3,12 +3,12 @@
 package ent
 
 import (
+	"example/internal/example/infrastructure/persistence/ent/example"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
 )
 
 // Example is the model entity for the Example schema.

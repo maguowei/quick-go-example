@@ -2,9 +2,9 @@ package repository
 
 import (
     "context"
-    "github.com/maguowei/example/internal/example/domain/entities"
-    "github.com/maguowei/example/internal/example/domain/repository"
-    "github.com/maguowei/example/internal/example/infrastructure/persistence/ent"
+    "example/internal/example/domain/entities"
+    "example/internal/example/domain/repository"
+    "example/internal/example/infrastructure/persistence/ent"
 )
 
 type exampleRepository struct {

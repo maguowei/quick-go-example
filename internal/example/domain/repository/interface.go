@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/maguowei/example/internal/example/domain/entities"
+	"example/internal/example/domain/entities"
 )
 
 type ExampleRepositoryInterface interface {

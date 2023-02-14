@@ -4,13 +4,13 @@ package ent
 
 import (
 	"context"
+	"example/internal/example/infrastructure/persistence/ent/example"
+	"example/internal/example/infrastructure/persistence/ent/predicate"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/predicate"
 )
 
 // ExampleDelete is the builder for deleting a Example entity.

@@ -1,7 +1,7 @@
 package main
 
 import (
-    "github.com/maguowei/example/internal/example"
+    "example/internal/example"
     _ "go.uber.org/automaxprocs"
 )
 

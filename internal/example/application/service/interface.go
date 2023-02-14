@@ -2,7 +2,7 @@ package service
 
 import (
     "context"
-    "github.com/maguowei/example/internal/example/domain/entities"
+    "example/internal/example/domain/entities"
 )
 
 type ExampleAppServiceInterface interface {

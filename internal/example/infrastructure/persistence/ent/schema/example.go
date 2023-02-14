@@ -2,7 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"github.com/maguowei/example/internal/pkg/mixin"
+	"example/internal/pkg/mixin"
 )
 
 // Example holds the schema definition for the Example entity.

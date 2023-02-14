@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/maguowei/example/internal/example/domain/entities"
+import "example/internal/example/domain/entities"
 
 type ExampleCreateReqDto struct {
 	//Title    string `json:"title" binding:"required"`

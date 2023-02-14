@@ -4,9 +4,8 @@ package hook
 
 import (
 	"context"
+	"example/internal/example/infrastructure/persistence/ent"
 	"fmt"
-
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent"
 )
 
 // The ExampleFunc type is an adapter to allow the use of ordinary

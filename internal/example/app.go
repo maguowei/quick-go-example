@@ -2,9 +2,9 @@ package example
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/maguowei/example/internal/example/interfaces/server"
-	"github.com/maguowei/example/internal/pkg/app"
-	"github.com/maguowei/example/internal/pkg/configs"
+	"example/internal/example/interfaces/server"
+	"example/internal/pkg/app"
+	"example/internal/pkg/configs"
 )
 
 

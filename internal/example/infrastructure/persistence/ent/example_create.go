@@ -5,12 +5,12 @@ package ent
 import (
 	"context"
 	"errors"
+	"example/internal/example/infrastructure/persistence/ent/example"
 	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/maguowei/example/internal/example/infrastructure/persistence/ent/example"
 )
 
 // ExampleCreate is the builder for creating a Example entity.
