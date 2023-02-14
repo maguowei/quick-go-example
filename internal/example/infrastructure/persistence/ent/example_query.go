@@ -17,11 +17,9 @@ import (
 // ExampleQuery is the builder for querying Example entities.
 type ExampleQuery struct {
 	config
-	limit      *int
-	offset     *int
-	unique     *bool
+	ctx        *QueryContext
 	order      []OrderFunc
-	fields     []string
+	inters     []Interceptor
 	predicates []predicate.Example
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -34,26 +32,26 @@ func (eq *ExampleQuery) Where(ps ...predicate.Example) *ExampleQuery {
 	return eq
 }
 
-// Limit adds a limit step to the query.
+// Limit the number of records to be returned by this query.
 func (eq *ExampleQuery) Limit(limit int) *ExampleQuery {
-	eq.limit = &limit
+	eq.ctx.Limit = &limit
 	return eq
 }
 
-// Offset adds an offset step to the query.
+// Offset to start from.
 func (eq *ExampleQuery) Offset(offset int) *ExampleQuery {
-	eq.offset = &offset
+	eq.ctx.Offset = &offset
 	return eq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
 func (eq *ExampleQuery) Unique(unique bool) *ExampleQuery {
-	eq.unique = &unique
+	eq.ctx.Unique = &unique
 	return eq
 }
 
-// Order adds an order step to the query.
+// Order specifies how the records should be ordered.
 func (eq *ExampleQuery) Order(o ...OrderFunc) *ExampleQuery {
 	eq.order = append(eq.order, o...)
 	return eq
@@ -62,7 +60,7 @@ func (eq *ExampleQuery) Order(o ...OrderFunc) *ExampleQuery {
 // First returns the first Example entity from the query.
 // Returns a *NotFoundError when no Example was found.
 func (eq *ExampleQuery) First(ctx context.Context) (*Example, error) {
-	nodes, err := eq.Limit(1).All(ctx)
+	nodes, err := eq.Limit(1).All(setContextOp(ctx, eq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +83,7 @@ func (eq *ExampleQuery) FirstX(ctx context.Context) *Example {
 // Returns a *NotFoundError when no Example ID was found.
 func (eq *ExampleQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = eq.Limit(1).IDs(ctx); err != nil {
+	if ids, err = eq.Limit(1).IDs(setContextOp(ctx, eq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +106,7 @@ func (eq *ExampleQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one Example entity is found.
 // Returns a *NotFoundError when no Example entities are found.
 func (eq *ExampleQuery) Only(ctx context.Context) (*Example, error) {
-	nodes, err := eq.Limit(2).All(ctx)
+	nodes, err := eq.Limit(2).All(setContextOp(ctx, eq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +134,7 @@ func (eq *ExampleQuery) OnlyX(ctx context.Context) *Example {
 // Returns a *NotFoundError when no entities are found.
 func (eq *ExampleQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = eq.Limit(2).IDs(ctx); err != nil {
+	if ids, err = eq.Limit(2).IDs(setContextOp(ctx, eq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,10 +159,12 @@ func (eq *ExampleQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of Examples.
 func (eq *ExampleQuery) All(ctx context.Context) ([]*Example, error) {
+	ctx = setContextOp(ctx, eq.ctx, "All")
 	if err := eq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	return eq.sqlAll(ctx)
+	qr := querierAll[[]*Example, *ExampleQuery]()
+	return withInterceptors[[]*Example](ctx, eq, qr, eq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
@@ -177,9 +177,12 @@ func (eq *ExampleQuery) AllX(ctx context.Context) []*Example {
 }
 
 // IDs executes the query and returns a list of Example IDs.
-func (eq *ExampleQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
-	if err := eq.Select(example.FieldID).Scan(ctx, &ids); err != nil {
+func (eq *ExampleQuery) IDs(ctx context.Context) (ids []int, err error) {
+	if eq.ctx.Unique == nil && eq.path != nil {
+		eq.Unique(true)
+	}
+	ctx = setContextOp(ctx, eq.ctx, "IDs")
+	if err = eq.Select(example.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -196,10 +199,11 @@ func (eq *ExampleQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (eq *ExampleQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, eq.ctx, "Count")
 	if err := eq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return eq.sqlCount(ctx)
+	return withInterceptors[int](ctx, eq, querierCount[*ExampleQuery](), eq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
@@ -213,10 +217,15 @@ func (eq *ExampleQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (eq *ExampleQuery) Exist(ctx context.Context) (bool, error) {
-	if err := eq.prepareQuery(ctx); err != nil {
-		return false, err
+	ctx = setContextOp(ctx, eq.ctx, "Exist")
+	switch _, err := eq.FirstID(ctx); {
+	case IsNotFound(err):
+		return false, nil
+	case err != nil:
+		return false, fmt.Errorf("ent: check existence: %w", err)
+	default:
+		return true, nil
 	}
-	return eq.sqlExist(ctx)
 }
 
 // ExistX is like Exist, but panics if an error occurs.
@@ -236,14 +245,13 @@ func (eq *ExampleQuery) Clone() *ExampleQuery {
 	}
 	return &ExampleQuery{
 		config:     eq.config,
-		limit:      eq.limit,
-		offset:     eq.offset,
+		ctx:        eq.ctx.Clone(),
 		order:      append([]OrderFunc{}, eq.order...),
+		inters:     append([]Interceptor{}, eq.inters...),
 		predicates: append([]predicate.Example{}, eq.predicates...),
 		// clone intermediate query.
-		sql:    eq.sql.Clone(),
-		path:   eq.path,
-		unique: eq.unique,
+		sql:  eq.sql.Clone(),
+		path: eq.path,
 	}
 }
 
@@ -262,16 +270,11 @@ func (eq *ExampleQuery) Clone() *ExampleQuery {
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (eq *ExampleQuery) GroupBy(field string, fields ...string) *ExampleGroupBy {
-	grbuild := &ExampleGroupBy{config: eq.config}
-	grbuild.fields = append([]string{field}, fields...)
-	grbuild.path = func(ctx context.Context) (prev *sql.Selector, err error) {
-		if err := eq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		return eq.sqlQuery(ctx), nil
-	}
+	eq.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &ExampleGroupBy{build: eq}
+	grbuild.flds = &eq.ctx.Fields
 	grbuild.label = example.Label
-	grbuild.flds, grbuild.scan = &grbuild.fields, grbuild.Scan
+	grbuild.scan = grbuild.Scan
 	return grbuild
 }
 
@@ -288,15 +291,30 @@ func (eq *ExampleQuery) GroupBy(field string, fields ...string) *ExampleGroupBy 
 //		Select(example.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (eq *ExampleQuery) Select(fields ...string) *ExampleSelect {
-	eq.fields = append(eq.fields, fields...)
-	selbuild := &ExampleSelect{ExampleQuery: eq}
-	selbuild.label = example.Label
-	selbuild.flds, selbuild.scan = &eq.fields, selbuild.Scan
-	return selbuild
+	eq.ctx.Fields = append(eq.ctx.Fields, fields...)
+	sbuild := &ExampleSelect{ExampleQuery: eq}
+	sbuild.label = example.Label
+	sbuild.flds, sbuild.scan = &eq.ctx.Fields, sbuild.Scan
+	return sbuild
+}
+
+// Aggregate returns a ExampleSelect configured with the given aggregations.
+func (eq *ExampleQuery) Aggregate(fns ...AggregateFunc) *ExampleSelect {
+	return eq.Select().Aggregate(fns...)
 }
 
 func (eq *ExampleQuery) prepareQuery(ctx context.Context) error {
-	for _, f := range eq.fields {
+	for _, inter := range eq.inters {
+		if inter == nil {
+			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
+		}
+		if trv, ok := inter.(Traverser); ok {
+			if err := trv.Traverse(ctx, eq); err != nil {
+				return err
+			}
+		}
+	}
+	for _, f := range eq.ctx.Fields {
 		if !example.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
@@ -316,10 +334,10 @@ func (eq *ExampleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exam
 		nodes = []*Example{}
 		_spec = eq.querySpec()
 	)
-	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
+	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Example).scanValues(nil, columns)
 	}
-	_spec.Assign = func(columns []string, values []interface{}) error {
+	_spec.Assign = func(columns []string, values []any) error {
 		node := &Example{config: eq.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
@@ -338,38 +356,22 @@ func (eq *ExampleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Exam
 
 func (eq *ExampleQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := eq.querySpec()
-	_spec.Node.Columns = eq.fields
-	if len(eq.fields) > 0 {
-		_spec.Unique = eq.unique != nil && *eq.unique
+	_spec.Node.Columns = eq.ctx.Fields
+	if len(eq.ctx.Fields) > 0 {
+		_spec.Unique = eq.ctx.Unique != nil && *eq.ctx.Unique
 	}
 	return sqlgraph.CountNodes(ctx, eq.driver, _spec)
 }
 
-func (eq *ExampleQuery) sqlExist(ctx context.Context) (bool, error) {
-	n, err := eq.sqlCount(ctx)
-	if err != nil {
-		return false, fmt.Errorf("ent: check existence: %w", err)
-	}
-	return n > 0, nil
-}
-
 func (eq *ExampleQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := &sqlgraph.QuerySpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   example.Table,
-			Columns: example.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: example.FieldID,
-			},
-		},
-		From:   eq.sql,
-		Unique: true,
-	}
-	if unique := eq.unique; unique != nil {
+	_spec := sqlgraph.NewQuerySpec(example.Table, example.Columns, sqlgraph.NewFieldSpec(example.FieldID, field.TypeInt))
+	_spec.From = eq.sql
+	if unique := eq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
+	} else if eq.path != nil {
+		_spec.Unique = true
 	}
-	if fields := eq.fields; len(fields) > 0 {
+	if fields := eq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, example.FieldID)
 		for i := range fields {
@@ -385,10 +387,10 @@ func (eq *ExampleQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if limit := eq.limit; limit != nil {
+	if limit := eq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := eq.offset; offset != nil {
+	if offset := eq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
 	if ps := eq.order; len(ps) > 0 {
@@ -404,7 +406,7 @@ func (eq *ExampleQuery) querySpec() *sqlgraph.QuerySpec {
 func (eq *ExampleQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(eq.driver.Dialect())
 	t1 := builder.Table(example.Table)
-	columns := eq.fields
+	columns := eq.ctx.Fields
 	if len(columns) == 0 {
 		columns = example.Columns
 	}
@@ -413,7 +415,7 @@ func (eq *ExampleQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector = eq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if eq.unique != nil && *eq.unique {
+	if eq.ctx.Unique != nil && *eq.ctx.Unique {
 		selector.Distinct()
 	}
 	for _, p := range eq.predicates {
@@ -422,12 +424,12 @@ func (eq *ExampleQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	for _, p := range eq.order {
 		p(selector)
 	}
-	if offset := eq.offset; offset != nil {
+	if offset := eq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := eq.limit; limit != nil {
+	if limit := eq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -435,13 +437,8 @@ func (eq *ExampleQuery) sqlQuery(ctx context.Context) *sql.Selector {
 
 // ExampleGroupBy is the group-by builder for Example entities.
 type ExampleGroupBy struct {
-	config
 	selector
-	fields []string
-	fns    []AggregateFunc
-	// intermediate query (i.e. traversal path).
-	sql  *sql.Selector
-	path func(context.Context) (*sql.Selector, error)
+	build *ExampleQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
@@ -450,74 +447,77 @@ func (egb *ExampleGroupBy) Aggregate(fns ...AggregateFunc) *ExampleGroupBy {
 	return egb
 }
 
-// Scan applies the group-by query and scans the result into the given value.
-func (egb *ExampleGroupBy) Scan(ctx context.Context, v interface{}) error {
-	query, err := egb.path(ctx)
-	if err != nil {
+// Scan applies the selector query and scans the result into the given value.
+func (egb *ExampleGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, egb.build.ctx, "GroupBy")
+	if err := egb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	egb.sql = query
-	return egb.sqlScan(ctx, v)
+	return scanWithInterceptors[*ExampleQuery, *ExampleGroupBy](ctx, egb.build, egb, egb.build.inters, v)
 }
 
-func (egb *ExampleGroupBy) sqlScan(ctx context.Context, v interface{}) error {
-	for _, f := range egb.fields {
-		if !example.ValidColumn(f) {
-			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
-		}
+func (egb *ExampleGroupBy) sqlScan(ctx context.Context, root *ExampleQuery, v any) error {
+	selector := root.sqlQuery(ctx).Select()
+	aggregation := make([]string, 0, len(egb.fns))
+	for _, fn := range egb.fns {
+		aggregation = append(aggregation, fn(selector))
 	}
-	selector := egb.sqlQuery()
+	if len(selector.SelectedColumns()) == 0 {
+		columns := make([]string, 0, len(*egb.flds)+len(egb.fns))
+		for _, f := range *egb.flds {
+			columns = append(columns, selector.C(f))
+		}
+		columns = append(columns, aggregation...)
+		selector.Select(columns...)
+	}
+	selector.GroupBy(selector.Columns(*egb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := egb.driver.Query(ctx, query, args, rows); err != nil {
+	if err := egb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-func (egb *ExampleGroupBy) sqlQuery() *sql.Selector {
-	selector := egb.sql.Select()
-	aggregation := make([]string, 0, len(egb.fns))
-	for _, fn := range egb.fns {
-		aggregation = append(aggregation, fn(selector))
-	}
-	// If no columns were selected in a custom aggregation function, the default
-	// selection is the fields used for "group-by", and the aggregation functions.
-	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(egb.fields)+len(egb.fns))
-		for _, f := range egb.fields {
-			columns = append(columns, selector.C(f))
-		}
-		columns = append(columns, aggregation...)
-		selector.Select(columns...)
-	}
-	return selector.GroupBy(selector.Columns(egb.fields...)...)
-}
-
 // ExampleSelect is the builder for selecting fields of Example entities.
 type ExampleSelect struct {
 	*ExampleQuery
 	selector
-	// intermediate query (i.e. traversal path).
-	sql *sql.Selector
+}
+
+// Aggregate adds the given aggregation functions to the selector query.
+func (es *ExampleSelect) Aggregate(fns ...AggregateFunc) *ExampleSelect {
+	es.fns = append(es.fns, fns...)
+	return es
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (es *ExampleSelect) Scan(ctx context.Context, v interface{}) error {
+func (es *ExampleSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, es.ctx, "Select")
 	if err := es.prepareQuery(ctx); err != nil {
 		return err
 	}
-	es.sql = es.ExampleQuery.sqlQuery(ctx)
-	return es.sqlScan(ctx, v)
+	return scanWithInterceptors[*ExampleQuery, *ExampleSelect](ctx, es.ExampleQuery, es, es.inters, v)
 }
 
-func (es *ExampleSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (es *ExampleSelect) sqlScan(ctx context.Context, root *ExampleQuery, v any) error {
+	selector := root.sqlQuery(ctx)
+	aggregation := make([]string, 0, len(es.fns))
+	for _, fn := range es.fns {
+		aggregation = append(aggregation, fn(selector))
+	}
+	switch n := len(*es.selector.flds); {
+	case n == 0 && len(aggregation) > 0:
+		selector.Select(aggregation...)
+	case n != 0 && len(aggregation) > 0:
+		selector.AppendSelect(aggregation...)
+	}
 	rows := &sql.Rows{}
-	query, args := es.sql.Query()
+	query, args := selector.Query()
 	if err := es.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}

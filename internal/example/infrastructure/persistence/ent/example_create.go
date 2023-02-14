@@ -55,50 +55,8 @@ func (ec *ExampleCreate) Mutation() *ExampleMutation {
 
 // Save creates the Example in the database.
 func (ec *ExampleCreate) Save(ctx context.Context) (*Example, error) {
-	var (
-		err  error
-		node *Example
-	)
 	ec.defaults()
-	if len(ec.hooks) == 0 {
-		if err = ec.check(); err != nil {
-			return nil, err
-		}
-		node, err = ec.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ExampleMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = ec.check(); err != nil {
-				return nil, err
-			}
-			ec.mutation = mutation
-			if node, err = ec.sqlSave(ctx); err != nil {
-				return nil, err
-			}
-			mutation.id = &node.ID
-			mutation.done = true
-			return node, err
-		})
-		for i := len(ec.hooks) - 1; i >= 0; i-- {
-			if ec.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = ec.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, ec.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Example)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from ExampleMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Example, ExampleMutation](ctx, ec.sqlSave, ec.mutation, ec.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -147,6 +105,9 @@ func (ec *ExampleCreate) check() error {
 }
 
 func (ec *ExampleCreate) sqlSave(ctx context.Context) (*Example, error) {
+	if err := ec.check(); err != nil {
+		return nil, err
+	}
 	_node, _spec := ec.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ec.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
@@ -156,34 +117,22 @@ func (ec *ExampleCreate) sqlSave(ctx context.Context) (*Example, error) {
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
+	ec.mutation.id = &_node.ID
+	ec.mutation.done = true
 	return _node, nil
 }
 
 func (ec *ExampleCreate) createSpec() (*Example, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Example{config: ec.config}
-		_spec = &sqlgraph.CreateSpec{
-			Table: example.Table,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: example.FieldID,
-			},
-		}
+		_spec = sqlgraph.NewCreateSpec(example.Table, sqlgraph.NewFieldSpec(example.FieldID, field.TypeInt))
 	)
 	if value, ok := ec.mutation.CreatedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: example.FieldCreatedAt,
-		})
+		_spec.SetField(example.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := ec.mutation.UpdatedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: example.FieldUpdatedAt,
-		})
+		_spec.SetField(example.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
 	return _node, _spec

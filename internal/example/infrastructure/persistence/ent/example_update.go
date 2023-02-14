@@ -41,35 +41,8 @@ func (eu *ExampleUpdate) Mutation() *ExampleMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (eu *ExampleUpdate) Save(ctx context.Context) (int, error) {
-	var (
-		err      error
-		affected int
-	)
 	eu.defaults()
-	if len(eu.hooks) == 0 {
-		affected, err = eu.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ExampleMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			eu.mutation = mutation
-			affected, err = eu.sqlSave(ctx)
-			mutation.done = true
-			return affected, err
-		})
-		for i := len(eu.hooks) - 1; i >= 0; i-- {
-			if eu.hooks[i] == nil {
-				return 0, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = eu.hooks[i](mut)
-		}
-		if _, err := mut.Mutate(ctx, eu.mutation); err != nil {
-			return 0, err
-		}
-	}
-	return affected, err
+	return withHooks[int, ExampleMutation](ctx, eu.sqlSave, eu.mutation, eu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -103,16 +76,7 @@ func (eu *ExampleUpdate) defaults() {
 }
 
 func (eu *ExampleUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   example.Table,
-			Columns: example.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: example.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(example.Table, example.Columns, sqlgraph.NewFieldSpec(example.FieldID, field.TypeInt))
 	if ps := eu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -121,11 +85,7 @@ func (eu *ExampleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := eu.mutation.UpdatedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: example.FieldUpdatedAt,
-		})
+		_spec.SetField(example.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -135,6 +95,7 @@ func (eu *ExampleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
+	eu.mutation.done = true
 	return n, nil
 }
 
@@ -157,6 +118,12 @@ func (euo *ExampleUpdateOne) Mutation() *ExampleMutation {
 	return euo.mutation
 }
 
+// Where appends a list predicates to the ExampleUpdate builder.
+func (euo *ExampleUpdateOne) Where(ps ...predicate.Example) *ExampleUpdateOne {
+	euo.mutation.Where(ps...)
+	return euo
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (euo *ExampleUpdateOne) Select(field string, fields ...string) *ExampleUpdateOne {
@@ -166,41 +133,8 @@ func (euo *ExampleUpdateOne) Select(field string, fields ...string) *ExampleUpda
 
 // Save executes the query and returns the updated Example entity.
 func (euo *ExampleUpdateOne) Save(ctx context.Context) (*Example, error) {
-	var (
-		err  error
-		node *Example
-	)
 	euo.defaults()
-	if len(euo.hooks) == 0 {
-		node, err = euo.sqlSave(ctx)
-	} else {
-		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ExampleMutation)
-			if !ok {
-				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			euo.mutation = mutation
-			node, err = euo.sqlSave(ctx)
-			mutation.done = true
-			return node, err
-		})
-		for i := len(euo.hooks) - 1; i >= 0; i-- {
-			if euo.hooks[i] == nil {
-				return nil, fmt.Errorf("ent: uninitialized hook (forgotten import ent/runtime?)")
-			}
-			mut = euo.hooks[i](mut)
-		}
-		v, err := mut.Mutate(ctx, euo.mutation)
-		if err != nil {
-			return nil, err
-		}
-		nv, ok := v.(*Example)
-		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from ExampleMutation", v)
-		}
-		node = nv
-	}
-	return node, err
+	return withHooks[*Example, ExampleMutation](ctx, euo.sqlSave, euo.mutation, euo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -234,16 +168,7 @@ func (euo *ExampleUpdateOne) defaults() {
 }
 
 func (euo *ExampleUpdateOne) sqlSave(ctx context.Context) (_node *Example, err error) {
-	_spec := &sqlgraph.UpdateSpec{
-		Node: &sqlgraph.NodeSpec{
-			Table:   example.Table,
-			Columns: example.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
-				Column: example.FieldID,
-			},
-		},
-	}
+	_spec := sqlgraph.NewUpdateSpec(example.Table, example.Columns, sqlgraph.NewFieldSpec(example.FieldID, field.TypeInt))
 	id, ok := euo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Example.id" for update`)}
@@ -269,11 +194,7 @@ func (euo *ExampleUpdateOne) sqlSave(ctx context.Context) (_node *Example, err e
 		}
 	}
 	if value, ok := euo.mutation.UpdatedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: example.FieldUpdatedAt,
-		})
+		_spec.SetField(example.FieldUpdatedAt, field.TypeTime, value)
 	}
 	_node = &Example{config: euo.config}
 	_spec.Assign = _node.assignValues
@@ -286,5 +207,6 @@ func (euo *ExampleUpdateOne) sqlSave(ctx context.Context) (_node *Example, err e
 		}
 		return nil, err
 	}
+	euo.mutation.done = true
 	return _node, nil
 }

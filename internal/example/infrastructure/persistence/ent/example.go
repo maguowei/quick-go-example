@@ -23,8 +23,8 @@ type Example struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Example) scanValues(columns []string) ([]interface{}, error) {
-	values := make([]interface{}, len(columns))
+func (*Example) scanValues(columns []string) ([]any, error) {
+	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
 		case example.FieldID:
@@ -40,7 +40,7 @@ func (*Example) scanValues(columns []string) ([]interface{}, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Example fields.
-func (e *Example) assignValues(columns []string, values []interface{}) error {
+func (e *Example) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -73,7 +73,7 @@ func (e *Example) assignValues(columns []string, values []interface{}) error {
 // Note that you need to call Example.Unwrap() before calling this method if this Example
 // was returned from a transaction, and the transaction was committed or rolled back.
 func (e *Example) Update() *ExampleUpdateOne {
-	return (&ExampleClient{config: e.config}).UpdateOne(e)
+	return NewExampleClient(e.config).UpdateOne(e)
 }
 
 // Unwrap unwraps the Example entity that was returned from a transaction after it was closed,
@@ -103,9 +103,3 @@ func (e *Example) String() string {
 
 // Examples is a parsable slice of Example.
 type Examples []*Example
-
-func (e Examples) config(cfg config) {
-	for _i := range e {
-		e[_i].config = cfg
-	}
-}

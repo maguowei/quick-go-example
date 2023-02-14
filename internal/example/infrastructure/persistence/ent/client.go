@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -26,7 +27,7 @@ type Client struct {
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	cfg := config{log: log.Println, hooks: &hooks{}}
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
 	cfg.options(opts...)
 	client := &Client{config: cfg}
 	client.init()
@@ -58,7 +59,7 @@ func Open(driverName, dataSourceName string, options ...Option) (*Client, error)
 // is used until the transaction is committed or rolled back.
 func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	if _, ok := c.driver.(*txDriver); ok {
-		return nil, fmt.Errorf("ent: cannot start a transaction within a transaction")
+		return nil, errors.New("ent: cannot start a transaction within a transaction")
 	}
 	tx, err := newTx(ctx, c.driver)
 	if err != nil {
@@ -76,7 +77,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 // BeginTx returns a transactional client with specified options.
 func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 	if _, ok := c.driver.(*txDriver); ok {
-		return nil, fmt.Errorf("ent: cannot start a transaction within a transaction")
+		return nil, errors.New("ent: cannot start a transaction within a transaction")
 	}
 	tx, err := c.driver.(interface {
 		BeginTx(context.Context, *sql.TxOptions) (dialect.Tx, error)
@@ -121,6 +122,22 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Example.Use(hooks...)
 }
 
+// Intercept adds the query interceptors to all the entity clients.
+// In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
+func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Example.Intercept(interceptors...)
+}
+
+// Mutate implements the ent.Mutator interface.
+func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
+	switch m := m.(type) {
+	case *ExampleMutation:
+		return c.Example.mutate(ctx, m)
+	default:
+		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
 // ExampleClient is a client for the Example schema.
 type ExampleClient struct {
 	config
@@ -135,6 +152,12 @@ func NewExampleClient(c config) *ExampleClient {
 // A call to `Use(f, g, h)` equals to `example.Hooks(f(g(h())))`.
 func (c *ExampleClient) Use(hooks ...Hook) {
 	c.hooks.Example = append(c.hooks.Example, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `example.Intercept(f(g(h())))`.
+func (c *ExampleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Example = append(c.inters.Example, interceptors...)
 }
 
 // Create returns a builder for creating a Example entity.
@@ -177,7 +200,7 @@ func (c *ExampleClient) DeleteOne(e *Example) *ExampleDeleteOne {
 	return c.DeleteOneID(e.ID)
 }
 
-// DeleteOne returns a builder for deleting the given entity by its id.
+// DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *ExampleClient) DeleteOneID(id int) *ExampleDeleteOne {
 	builder := c.Delete().Where(example.ID(id))
 	builder.mutation.id = &id
@@ -189,6 +212,8 @@ func (c *ExampleClient) DeleteOneID(id int) *ExampleDeleteOne {
 func (c *ExampleClient) Query() *ExampleQuery {
 	return &ExampleQuery{
 		config: c.config,
+		ctx:    &QueryContext{Type: TypeExample},
+		inters: c.Interceptors(),
 	}
 }
 
@@ -209,4 +234,24 @@ func (c *ExampleClient) GetX(ctx context.Context, id int) *Example {
 // Hooks returns the client hooks.
 func (c *ExampleClient) Hooks() []Hook {
 	return c.hooks.Example
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExampleClient) Interceptors() []Interceptor {
+	return c.inters.Example
+}
+
+func (c *ExampleClient) mutate(ctx context.Context, m *ExampleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExampleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExampleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExampleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExampleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Example mutation op: %q", m.Op())
+	}
 }
