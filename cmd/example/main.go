@@ -1,6 +1,9 @@
 package main
 
-import "github.com/maguowei/example/internal/example"
+import (
+    "github.com/maguowei/example/internal/example"
+    _ "go.uber.org/automaxprocs"
+)
 
 func main() {
 	app := example.NewApp()

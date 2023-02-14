@@ -17,6 +17,7 @@ import (
 
 var server *gin.Engine
 
+
 func InitServer() {
 	server = gin.New()
 	server.Use(requestid.New())
@@ -38,6 +39,7 @@ func InitServer() {
 	exampleDomainService := domainService.NewExampleDomainService(exampleRepository)
 	exampleAppService := service.NewExampleAppService(exampleDomainService)
 	exampleApi := restapi.NewExampleApi(exampleAppService)
+
 
 	server.GET("/", restapi.Index)
 	server.GET("/health", restapi.Health)
