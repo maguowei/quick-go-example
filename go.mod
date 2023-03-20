@@ -9,7 +9,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/spf13/viper v1.15.0
 	github.com/zsais/go-gin-prometheus v0.1.0
-	go.uber.org/automaxprocs v1.5.1
+	go.uber.org/automaxprocs v1.5.2
 )
 
 require (
