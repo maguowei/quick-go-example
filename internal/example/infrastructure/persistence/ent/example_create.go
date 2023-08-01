@@ -56,7 +56,7 @@ func (ec *ExampleCreate) Mutation() *ExampleMutation {
 // Save creates the Example in the database.
 func (ec *ExampleCreate) Save(ctx context.Context) (*Example, error) {
 	ec.defaults()
-	return withHooks[*Example, ExampleMutation](ctx, ec.sqlSave, ec.mutation, ec.hooks)
+	return withHooks(ctx, ec.sqlSave, ec.mutation, ec.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
@@ -162,8 +162,8 @@ func (ecb *ExampleCreateBulk) Save(ctx context.Context) ([]*Example, error) {
 					return nil, err
 				}
 				builder.mutation = mutation
-				nodes[i], specs[i] = builder.createSpec()
 				var err error
+				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, ecb.builders[i+1].mutation)
 				} else {

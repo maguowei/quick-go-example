@@ -18,7 +18,7 @@ import (
 type ExampleQuery struct {
 	config
 	ctx        *QueryContext
-	order      []OrderFunc
+	order      []example.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Example
 	// intermediate query (i.e. traversal path).
@@ -52,7 +52,7 @@ func (eq *ExampleQuery) Unique(unique bool) *ExampleQuery {
 }
 
 // Order specifies how the records should be ordered.
-func (eq *ExampleQuery) Order(o ...OrderFunc) *ExampleQuery {
+func (eq *ExampleQuery) Order(o ...example.OrderOption) *ExampleQuery {
 	eq.order = append(eq.order, o...)
 	return eq
 }
@@ -246,7 +246,7 @@ func (eq *ExampleQuery) Clone() *ExampleQuery {
 	return &ExampleQuery{
 		config:     eq.config,
 		ctx:        eq.ctx.Clone(),
-		order:      append([]OrderFunc{}, eq.order...),
+		order:      append([]example.OrderOption{}, eq.order...),
 		inters:     append([]Interceptor{}, eq.inters...),
 		predicates: append([]predicate.Example{}, eq.predicates...),
 		// clone intermediate query.

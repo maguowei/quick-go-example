@@ -42,7 +42,7 @@ func (eu *ExampleUpdate) Mutation() *ExampleMutation {
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (eu *ExampleUpdate) Save(ctx context.Context) (int, error) {
 	eu.defaults()
-	return withHooks[int, ExampleMutation](ctx, eu.sqlSave, eu.mutation, eu.hooks)
+	return withHooks(ctx, eu.sqlSave, eu.mutation, eu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -134,7 +134,7 @@ func (euo *ExampleUpdateOne) Select(field string, fields ...string) *ExampleUpda
 // Save executes the query and returns the updated Example entity.
 func (euo *ExampleUpdateOne) Save(ctx context.Context) (*Example, error) {
 	euo.defaults()
-	return withHooks[*Example, ExampleMutation](ctx, euo.sqlSave, euo.mutation, euo.hooks)
+	return withHooks(ctx, euo.sqlSave, euo.mutation, euo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
