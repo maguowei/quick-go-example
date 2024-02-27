@@ -141,11 +141,15 @@ func (ec *ExampleCreate) createSpec() (*Example, *sqlgraph.CreateSpec) {
 // ExampleCreateBulk is the builder for creating many Example entities in bulk.
 type ExampleCreateBulk struct {
 	config
+	err      error
 	builders []*ExampleCreate
 }
 
 // Save creates the Example entities in the database.
 func (ecb *ExampleCreateBulk) Save(ctx context.Context) ([]*Example, error) {
+	if ecb.err != nil {
+		return nil, ecb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(ecb.builders))
 	nodes := make([]*Example, len(ecb.builders))
 	mutators := make([]Mutator, len(ecb.builders))
